@@ -15,3 +15,6 @@ torch-geometric
 mujoco
 imageio
 imageio-ffmpeg   # for mp4 output (gif works without it)
+
+# Figures (figures/make_figures.py)
+matplotlib
