@@ -1,0 +1,20 @@
+# Core runtime — Phase 2 (scene graph MVP). Verified installed on Python 3.8.10.
+networkx>=3.1
+numpy>=1.24
+scipy>=1.10
+pydantic>=2.10
+
+# Dev / test
+pytest>=8.0
+
+# --- Phase 5 (LLM planner) ---
+# ollama client is installed; a running `ollama serve` + a pulled model are
+# runtime prerequisites, not pip deps.
+ollama>=0.6
+
+# --- Phase 6 (simulation) ---
+mujoco>=3.2
+
+# NOTE: Phase 3 (chromadb / faiss) and Phase 4 (torch-geometric) deps live in
+# requirements-ml.txt because recent versions may require Python >= 3.9.
+# See docs/risk_register.md R-01.

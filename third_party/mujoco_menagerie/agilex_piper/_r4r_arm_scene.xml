@@ -1,0 +1,41 @@
+<mujoco model="r4r_piper_scene">
+  <include file="piper.xml"/>
+
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.35 0.35 0.35" specular="0.1 0.1 0.1"/>
+    <global azimuth="130" elevation="-25" offwidth="1280" offheight="720"/>
+  </visual>
+
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.5 0.6 0.72" rgb2="0.1 0.12 0.16" width="512" height="512"/>
+    <texture type="2d" name="grid" builtin="checker" rgb1="0.3 0.32 0.35" rgb2="0.22 0.24 0.27"
+      markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="grid" texture="grid" texuniform="true" texrepeat="6 6" reflectance="0.1"/>
+    <material name="table_mat" rgba="0.72 0.55 0.36 1"/>
+    <material name="bin_mat" rgba="0.2 0.42 0.8 0.5"/>
+    <material name="mug_mat" rgba="0.85 0.15 0.15 1"/>
+  </asset>
+
+  <worldbody>
+    <light pos="0.4 -0.4 1.5" dir="-0.2 0.2 -1" diffuse="0.8 0.8 0.8"/>
+    <camera name="fixed" pos="0.42 -0.85 0.62" xyaxes="0.9 0.44 0 -0.22 0.45 0.87"/>
+    <geom name="floor" type="plane" size="0 0 0.05" material="grid" pos="0 0 -0.001"/>
+
+    <!-- table top at z = 0 (arm base sits on it) -->
+    <geom name="table_1" type="box" size="0.45 0.5 0.03" pos="0.28 0 -0.03" material="table_mat"/>
+
+    <!-- graspable cube (small enough for the Piper gripper, ~0.07 m opening) -->
+    <body name="red_mug_1" pos="0.36 0.02 0.024">
+      <freejoint name="red_mug_1_free"/>
+      <geom name="red_mug_1_g" type="box" size="0.022 0.022 0.024" material="mug_mat"
+            mass="0.05" friction="1.4 0.05 0.001"/>
+    </body>
+
+    <!-- open-top bin (static) -->
+    <geom name="bin_1_floor" type="box" size="0.09 0.09 0.006" pos="0.30 -0.24 0.006" material="bin_mat"/>
+    <geom name="bin_1_wx+" type="box" size="0.006 0.09 0.06" pos="0.384 -0.24 0.06" material="bin_mat"/>
+    <geom name="bin_1_wx-" type="box" size="0.006 0.09 0.06" pos="0.216 -0.24 0.06" material="bin_mat"/>
+    <geom name="bin_1_wy+" type="box" size="0.09 0.006 0.06" pos="0.30 -0.156 0.06" material="bin_mat"/>
+    <geom name="bin_1_wy-" type="box" size="0.09 0.006 0.06" pos="0.30 -0.324 0.06" material="bin_mat"/>
+  </worldbody>
+</mujoco>
