@@ -1,0 +1,9 @@
+# Phase 3/4 ML deps — install into a Python >= 3.10 venv (see risk R-01).
+# Versions intentionally unpinned here; pin after resolving the interpreter.
+
+# Phase 3 — GraphRAG vector index + text embeddings
+chromadb
+sentence-transformers
+
+# Phase 4 — GNN layer (chosen: PyTorch Geometric; keep a to_graphnet() adapter)
+torch-geometric
