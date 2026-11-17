@@ -49,6 +49,8 @@ class MujocoExecutor:
         self.xml, self.meta = build_mjcf(graph)
         self.model = mujoco.MjModel.from_xml_string(self.xml)
         self.data = mujoco.MjData(self.model)
+        # optional per-step hook (set by viewers/recorders): called as hook(self)
+        self.on_step = None
 
     # ---- low-level helpers ----
     def _qadr(self, oid: str) -> int:
@@ -76,6 +78,8 @@ class MujocoExecutor:
                 self._hold(hold[0], hold[1])
             self._mj.mj_step(self.model, self.data)
             self._total_steps += 1
+            if self.on_step is not None:
+                self.on_step(self)
 
     def _pose_of(self, oid: str) -> Pose:
         bid = self._bid(oid)

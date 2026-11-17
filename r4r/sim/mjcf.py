@@ -96,9 +96,14 @@ def build_mjcf(graph: SceneGraph) -> Tuple[str, SimMeta]:
 
     xml = f"""<mujoco model="r4r_scene">
   <option gravity="0 0 -9.81" timestep="0.002" integrator="implicitfast"/>
+  <visual>
+    <global offwidth="1280" offheight="720"/>
+  </visual>
   <worldbody>
-    <light pos="0 0 3" dir="0 0 -1"/>
-    <geom name="floor" type="plane" size="3 3 0.1" pos="0 0 0" rgba="0.3 0.3 0.3 1"/>
+    <light pos="0.5 -0.5 3" dir="-0.2 0.2 -1" diffuse="0.9 0.9 0.9"/>
+    <light pos="-0.5 0.5 2.5" dir="0.2 -0.2 -1" diffuse="0.4 0.4 0.4"/>
+    <geom name="floor" type="plane" size="3 3 0.1" pos="0 0 0" rgba="0.35 0.37 0.4 1"/>
+    <camera name="fixed" pos="-0.2 -1.25 1.45" xyaxes="1 0 0 0 0.5 0.86"/>
     {''.join(static_xml)}
     {''.join(body_xml)}
   </worldbody>

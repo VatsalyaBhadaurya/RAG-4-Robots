@@ -10,3 +10,8 @@ ollama
 # Phase 4 — GNN layer (chosen: PyTorch Geometric; keep a to_graphnet() adapter)
 # Install matching your torch/CUDA build; pin after Phase 4 starts.
 torch-geometric
+
+# Phase 6 — MuJoCo physics + visualization
+mujoco
+imageio
+imageio-ffmpeg   # for mp4 output (gif works without it)

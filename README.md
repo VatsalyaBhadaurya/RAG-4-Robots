@@ -38,6 +38,10 @@ Verified: a put-in-bin plan executes in MuJoCo (mug settles inside the bin, grap
 updated); and the safety guard blocks an unsafe LLM plan before execution.
 Try: `./.venv/Scripts/python examples/full_loop_demo.py`.
 
+**Watch the physics:** `examples/sim_view_demo.py` opens a live MuJoCo window;
+`examples/sim_record_demo.py` writes `runs/execution.mp4` + `.gif` of the mug
+being carried and dropped into the bin.
+
 **Measured (Phase 3, `nomic-embed-text`, 10-node scene):** retrieval mean
 recall 0.94, precision 0.46 (recall-first by design), token savings x1.4 vs
 full-graph prompting.
