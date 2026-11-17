@@ -69,7 +69,11 @@ def build_tabletop_scene() -> SceneGraph:
                     kind=NodeKind.CONTAINER, material="plastic",
                     affordances=["container", "accepts_placement"]))
 
-    # robot + end effector beside the table (no dims needed for reachability MVP)
+    # robot + end effector beside the table (no dims needed for reachability MVP)  # noqa: E501
+    return _finish_robot(g)
+
+
+def _finish_robot(g: SceneGraph) -> SceneGraph:
     g.add_node(SceneNode(object_id="robot_1", kind=NodeKind.ROBOT, label="manipulator",
                          pose=Pose(x=-0.7, y=0.0, z=_TOP),
                          attributes={"workspace_radius": 0.85, "payload_kg": 2.0},
@@ -79,4 +83,28 @@ def build_tabletop_scene() -> SceneGraph:
                          attributes={"max_width": 0.09, "max_force_n": 40.0},
                          provenance=Provenance(source_type=SourceType.STATIC, source_id="robot_spec")))
 
+    return g
+
+
+def build_pick_place_scene() -> SceneGraph:
+    """A minimal, uncluttered scene where a mug and bin are BOTH reachable and
+    well-separated — used for Phase 6 full-pipeline validation + MuJoCo
+    execution (the crowded demo scene has an out-of-reach bin on purpose)."""
+    g = SceneGraph()
+    g.add_node(_obj("table_1", "table", 0.0, 0.0, _TOP - 0.02, 1.0, 1.0, 0.04,
+                    kind=NodeKind.SURFACE, material="wood", affordances=["supports"]))
+    g.add_node(_obj("red_mug_1", "mug", -0.10, 0.0, _TOP + 0.05, 0.08, 0.08, 0.10,
+                    material="ceramic", affordances=["graspable_side", "containable"],
+                    attrs={"color": "red"}))
+    g.add_node(_obj("bin_1", "bin", 0.22, 0.0, _TOP + 0.11, 0.30, 0.30, 0.22,
+                    kind=NodeKind.CONTAINER, material="plastic",
+                    affordances=["container", "accepts_placement"]))
+    g.add_node(SceneNode(object_id="robot_1", kind=NodeKind.ROBOT, label="manipulator",
+                         pose=Pose(x=-0.45, y=0.0, z=_TOP),
+                         attributes={"workspace_radius": 0.95, "payload_kg": 2.0},
+                         provenance=Provenance(source_type=SourceType.STATIC, source_id="robot_spec")))
+    g.add_node(SceneNode(object_id="ee_1", kind=NodeKind.END_EFFECTOR, label="parallel_gripper",
+                         pose=Pose(x=-0.45, y=0.0, z=_TOP + 0.2),
+                         attributes={"max_width": 0.09, "max_force_n": 40.0},
+                         provenance=Provenance(source_type=SourceType.STATIC, source_id="robot_spec")))
     return g

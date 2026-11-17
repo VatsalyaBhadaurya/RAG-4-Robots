@@ -51,9 +51,10 @@ knowledge) so retrieval can traverse them together.
 | `r4r/scoring/tensors.py` | **Implemented** | Subgraph→tensors (NumPy) + PyG `HeteroData` + GraphNeT bundle stub |
 | `r4r/scoring` (GNN training) | Deferred (needs labels, P6) | GNN trained only if it beats heuristics |
 | `r4r/planner` | **Implemented** | Ollama (llama3.2) -> strict `ActionPlan`; parse/validate/repair/ground/fallback; MockBackend for tests |
-| `r4r/validation` | Planned (P6) | Deterministic plan validator + safety guard |
-| `r4r/sim` | Planned (P6) | MuJoCo tabletop; execution + world update |
-| `r4r/logging_` | Planned (P6) | Episode logs for eval + future training |
+| `r4r/validation` | **Implemented** | Deterministic validator + safety guard (reach/collision/payload/gripper/fragile/human/sequence) |
+| `r4r/sim` | **Implemented** | MJCF from SceneGraph + MuJoCo execution (attach-and-carry) + world-state update |
+| `r4r/logging_` | **Implemented** | JSONL episode logs (full trace) |
+| `r4r/pipeline.py` | **Implemented** | `run_episode()` orchestration: retrieve→score→plan→validate→execute→update→log |
 
 ## Retrieval primitive
 `SceneGraph.induced_subgraph(seed_ids, depth, relations, directed)` is the core
