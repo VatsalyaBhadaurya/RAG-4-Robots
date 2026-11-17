@@ -16,22 +16,26 @@ validated** robot action plans with an LLM planner.
 |-------|-------|
 | 1 - Research & requirements | done (see `docs/`) |
 | 2 - Scene-graph MVP | implemented & tested |
-| 3 - GraphRAG retrieval | **implemented & tested** (this branch) |
-| 4 - GNN scoring (PyTorch Geometric) | next |
-| 5 - LLM planner (Ollama, strict JSON) | planned |
+| 3 - GraphRAG retrieval | implemented & tested |
+| 4 - Heuristic scoring + GNN tensor schema | **implemented & tested** (this branch) |
+| 5 - LLM planner (Ollama, strict JSON) | next |
 | 6 - Safety, MuJoCo execution, logging | planned |
 
 **Implemented:** typed schemas - dynamic heterogeneous scene graph (NetworkX) -
 AABB spatial heuristics - induced-subgraph retrieval - two-stage GraphRAG
 (Ollama `nomic-embed-text` + NumPy/Chroma vector index) - seed knowledge base -
-retrieval benchmark - **40 passing tests**.
+retrieval benchmark - heuristic scorers (reachability/graspability/collision/
+support) with explanations - subgraph→tensor schema (NumPy + PyG `HeteroData` +
+GraphNeT bundle stub) - **54 passing tests**.
 
 **Measured (Phase 3, `nomic-embed-text`, 10-node scene):** retrieval mean
 recall 0.94, precision 0.46 (recall-first by design), token savings x1.4 vs
 full-graph prompting.
 
 **Mocked:** perception (ground-truth poses from the scene definition).
-**Unproven:** whether a GNN beats heuristics (Phase 4 experiment).
+**Deferred:** GNN *training* — heuristics ship first; a GNN is adopted only if it
+beats them on labeled MuJoCo data (Phase 6). Heuristic calibration is **unproven**
+until then.
 
 ## Stack (decisions locked - see `docs/decision_log.md`)
 GNN: **PyTorch Geometric** | Simulator: **MuJoCo** | Graph+vector:
@@ -66,6 +70,7 @@ r4r/embeddings/   hash (offline) + ollama embedders
 r4r/index/        numpy + chroma vector indexes
 r4r/retrieval/    task abstraction, two-stage retriever, serialization
 r4r/knowledge/    seed safety rules / templates / procedures
+r4r/scoring/      heuristic scorers + subgraph→tensor schema (PyG/GraphNeT)
 r4r/eval/         retrieval benchmark + metrics
 tests/            unit tests (offline; ollama/chroma tests auto-skip)
 docs/             architecture, decision log, risk register

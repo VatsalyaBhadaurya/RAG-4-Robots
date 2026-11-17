@@ -47,7 +47,9 @@ knowledge) so retrieval can traverse them together.
 | `r4r/retrieval` | **Implemented** | Task abstraction, two-stage retriever, compact serialization w/ provenance |
 | `r4r/knowledge` | **Implemented** | Seed safety rules / templates / procedures as knowledge nodes |
 | `r4r/eval` | **Implemented (P3 metrics)** | Retrieval precision/recall + token-savings benchmark |
-| `r4r/scoring` | Planned (P4) | Heuristic + GNN scores; PyG tensor conversion; `to_graphnet()` |
+| `r4r/scoring/heuristics.py` | **Implemented** | Reachability/graspability/collision/support heuristics + explanations |
+| `r4r/scoring/tensors.py` | **Implemented** | Subgraph→tensors (NumPy) + PyG `HeteroData` + GraphNeT bundle stub |
+| `r4r/scoring` (GNN training) | Deferred (needs labels, P6) | GNN trained only if it beats heuristics |
 | `r4r/planner` | Planned (P5) | Ollama client -> strict `ActionPlan` |
 | `r4r/validation` | Planned (P6) | Deterministic plan validator + safety guard |
 | `r4r/sim` | Planned (P6) | MuJoCo tabletop; execution + world update |
