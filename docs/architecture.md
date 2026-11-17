@@ -50,7 +50,7 @@ knowledge) so retrieval can traverse them together.
 | `r4r/scoring/heuristics.py` | **Implemented** | Reachability/graspability/collision/support heuristics + explanations |
 | `r4r/scoring/tensors.py` | **Implemented** | Subgraph→tensors (NumPy) + PyG `HeteroData` + GraphNeT bundle stub |
 | `r4r/scoring` (GNN training) | Deferred (needs labels, P6) | GNN trained only if it beats heuristics |
-| `r4r/planner` | Planned (P5) | Ollama client -> strict `ActionPlan` |
+| `r4r/planner` | **Implemented** | Ollama (llama3.2) -> strict `ActionPlan`; parse/validate/repair/ground/fallback; MockBackend for tests |
 | `r4r/validation` | Planned (P6) | Deterministic plan validator + safety guard |
 | `r4r/sim` | Planned (P6) | MuJoCo tabletop; execution + world update |
 | `r4r/logging_` | Planned (P6) | Episode logs for eval + future training |
