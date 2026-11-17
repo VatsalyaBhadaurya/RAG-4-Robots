@@ -55,7 +55,7 @@ knowledge) so retrieval can traverse them together.
 | `r4r/sim` | **Implemented** | MJCF from SceneGraph + MuJoCo execution (attach-and-carry) + world-state update |
 | `r4r/sim/piper.py` | **Implemented** | Real AgileX Piper arm + position IK executes an ActionPlan pick-and-place |
 | `r4r/logging_` | **Implemented** | JSONL episode logs (full trace) |
-| `r4r/pipeline.py` | **Implemented** | `run_episode()` orchestration: retrieve→score→plan→validate→execute→update→log |
+| `r4r/pipeline.py` | **Implemented** | `run_episode()` orchestration: retrieve→score→plan→validate→execute→update→log; `execution_backend="kinematic"|"piper"` (real arm) |
 
 ## Retrieval primitive
 `SceneGraph.induced_subgraph(seed_ids, depth, relations, directed)` is the core

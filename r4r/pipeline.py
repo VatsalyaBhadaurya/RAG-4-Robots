@@ -47,7 +47,13 @@ def run_episode(
     execute: bool = True,
     k_entities: int = 4,
     depth: int = 1,
+    execution_backend: str = "kinematic",
+    on_exec_step=None,
 ) -> Tuple[EpisodeLog, SceneGraph]:
+    """execution_backend: 'kinematic' (MJCF built from the graph, attach-and-carry)
+    or 'piper' (real AgileX Piper arm + IK; the graph must mirror the Piper
+    MuJoCo scene — see build_piper_scene_graph). on_exec_step(executor) is an
+    optional per-physics-step hook for viewers/recorders."""
     # 1. retrieve
     retriever = GraphRAGRetriever(graph, embedder).build()
     res = retriever.retrieve(instruction, k_entities=k_entities, depth=depth)
@@ -85,8 +91,15 @@ def run_episode(
     executed = False
     exec_ok = False
     if execute and validation.ok:
-        from r4r.sim.executor import MujocoExecutor, update_graph_from_execution
-        executor = MujocoExecutor(graph)
+        from r4r.sim.executor import update_graph_from_execution
+        if execution_backend == "piper":
+            from r4r.sim.piper import PiperArmExecutor
+            executor = PiperArmExecutor()
+        else:
+            from r4r.sim.executor import MujocoExecutor
+            executor = MujocoExecutor(graph)
+        if on_exec_step is not None:
+            executor.on_step = on_exec_step
         exec_result = executor.execute(plan_result.plan)
         executed = True
         exec_ok = exec_result.success

@@ -48,6 +48,12 @@ kinematics to pick a cube and place it in the bin → `runs/arm_execution.mp4`.
 The arm is full physics + IK; the grasp bond is kinematic (R-11, D-12).
 Vendored model is BSD-3 (see `third_party/mujoco_menagerie/agilex_piper/LICENSE`).
 
+**Full loop on the real arm:** `examples/arm_full_loop_demo.py` runs
+retrieve→score→plan (llama3.2)→**validate (gate)**→Piper arm executes via IK→
+world update→log, and records `runs/arm_full_loop.mp4`. Programmatically:
+`run_episode(..., execution_backend="piper")` (scene graph from
+`build_piper_scene_graph()`, which mirrors the MuJoCo scene).
+
 **Measured (Phase 3, `nomic-embed-text`, 10-node scene):** retrieval mean
 recall 0.94, precision 0.46 (recall-first by design), token savings x1.4 vs
 full-graph prompting.

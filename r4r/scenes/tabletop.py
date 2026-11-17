@@ -86,6 +86,37 @@ def _finish_robot(g: SceneGraph) -> SceneGraph:
     return g
 
 
+def build_piper_scene_graph() -> SceneGraph:
+    """Scene graph whose coordinates MIRROR the vendored Piper MuJoCo scene
+    (`third_party/.../agilex_piper/_r4r_arm_scene.xml`), so retrieval, scoring,
+    planning, and validation reason about the exact world the real arm executes
+    in. Arm base at the origin; table top at z=0.
+
+    Keep this in sync with _r4r_arm_scene.xml if either changes."""
+    g = SceneGraph()
+    # table top at z = 0 (arm mounted on it)
+    g.add_node(_obj("table_1", "table", 0.28, 0.0, -0.03, 0.90, 1.00, 0.06,
+                    kind=NodeKind.SURFACE, material="wood", affordances=["supports"]))
+    # small ceramic cube within the Piper's ~0.07 m gripper opening
+    g.add_node(_obj("red_mug_1", "mug", 0.36, 0.02, 0.024, 0.044, 0.044, 0.048,
+                    material="ceramic", affordances=["graspable_side", "containable"],
+                    attrs={"color": "red"}))
+    # open-top bin
+    g.add_node(_obj("bin_1", "bin", 0.30, -0.24, 0.06, 0.18, 0.18, 0.12,
+                    kind=NodeKind.CONTAINER, material="plastic",
+                    affordances=["container", "accepts_placement"]))
+    # Piper arm base at origin; reach ~0.55 m, small parallel gripper
+    g.add_node(SceneNode(object_id="robot_1", kind=NodeKind.ROBOT, label="piper_arm",
+                         pose=Pose(x=0.0, y=0.0, z=0.0),
+                         attributes={"workspace_radius": 0.55, "payload_kg": 2.0},
+                         provenance=Provenance(source_type=SourceType.STATIC, source_id="piper_spec")))
+    g.add_node(SceneNode(object_id="ee_1", kind=NodeKind.END_EFFECTOR, label="parallel_gripper",
+                         pose=Pose(x=0.0, y=0.0, z=0.2),
+                         attributes={"max_width": 0.07, "max_force_n": 20.0},
+                         provenance=Provenance(source_type=SourceType.STATIC, source_id="piper_spec")))
+    return g
+
+
 def build_pick_place_scene() -> SceneGraph:
     """A minimal, uncluttered scene where a mug and bin are BOTH reachable and
     well-separated — used for Phase 6 full-pipeline validation + MuJoCo
