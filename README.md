@@ -42,6 +42,12 @@ Try: `./.venv/Scripts/python examples/full_loop_demo.py`.
 `examples/sim_record_demo.py` writes `runs/execution.mp4` + `.gif` of the mug
 being carried and dropped into the bin.
 
+**Real robot arm:** `examples/arm_pick_place_demo.py` runs the **AgileX Piper**
+6-DoF arm (MuJoCo Menagerie, vendored in `third_party/`) driven by inverse
+kinematics to pick a cube and place it in the bin → `runs/arm_execution.mp4`.
+The arm is full physics + IK; the grasp bond is kinematic (R-11, D-12).
+Vendored model is BSD-3 (see `third_party/mujoco_menagerie/agilex_piper/LICENSE`).
+
 **Measured (Phase 3, `nomic-embed-text`, 10-node scene):** retrieval mean
 recall 0.94, precision 0.46 (recall-first by design), token savings x1.4 vs
 full-graph prompting.

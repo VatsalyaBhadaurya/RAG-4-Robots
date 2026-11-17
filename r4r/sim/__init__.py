@@ -21,8 +21,10 @@ from r4r.sim.executor import (
     MujocoExecutor,
     update_graph_from_execution,
 )
+from r4r.sim.piper import PIPER_SCENE, PiperArmExecutor, PiperConfig
 
 __all__ = [
     "build_mjcf", "SimMeta", "MujocoExecutor", "ExecutionResult", "ExecConfig",
     "update_graph_from_execution",
+    "PiperArmExecutor", "PiperConfig", "PIPER_SCENE",
 ]

@@ -53,6 +53,7 @@ knowledge) so retrieval can traverse them together.
 | `r4r/planner` | **Implemented** | Ollama (llama3.2) -> strict `ActionPlan`; parse/validate/repair/ground/fallback; MockBackend for tests |
 | `r4r/validation` | **Implemented** | Deterministic validator + safety guard (reach/collision/payload/gripper/fragile/human/sequence) |
 | `r4r/sim` | **Implemented** | MJCF from SceneGraph + MuJoCo execution (attach-and-carry) + world-state update |
+| `r4r/sim/piper.py` | **Implemented** | Real AgileX Piper arm + position IK executes an ActionPlan pick-and-place |
 | `r4r/logging_` | **Implemented** | JSONL episode logs (full trace) |
 | `r4r/pipeline.py` | **Implemented** | `run_episode()` orchestration: retrieve→score→plan→validate→execute→update→log |
 
