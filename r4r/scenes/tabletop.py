@@ -86,23 +86,32 @@ def _finish_robot(g: SceneGraph) -> SceneGraph:
     return g
 
 
-def build_piper_scene_graph() -> SceneGraph:
-    """Scene graph whose coordinates MIRROR the vendored Piper MuJoCo scene
-    (`third_party/.../agilex_piper/_r4r_arm_scene.xml`), so retrieval, scoring,
-    planning, and validation reason about the exact world the real arm executes
-    in. Arm base at the origin; table top at z=0.
+def build_piper_scene_graph(
+    target_xy=(0.36, 0.02),
+    bin_xy=(0.30, -0.24),
+    target_id: str = "red_mug_1",
+    target_label: str = "mug",
+    target_color: str = "red",
+    target_material: str = "ceramic",
+) -> SceneGraph:
+    """Arm-centric scene graph for the Piper executor. The arm base is at the
+    origin; place the target and bin within reach (~0.55 m) and keep the table
+    top at z=0. Objects must be smaller than the ~0.07 m gripper opening.
 
-    Keep this in sync with _r4r_arm_scene.xml if either changes."""
+    Parametrized so you can test ANY layout, e.g.
+        build_piper_scene_graph(target_xy=(0.40, -0.06), bin_xy=(0.30, 0.24))
+    The same graph is handed to retrieval/scoring/validation AND used to generate
+    the MuJoCo arm scene (via build_piper_mjcf), so they stay consistent."""
     g = SceneGraph()
     # table top at z = 0 (arm mounted on it)
     g.add_node(_obj("table_1", "table", 0.28, 0.0, -0.03, 0.90, 1.00, 0.06,
                     kind=NodeKind.SURFACE, material="wood", affordances=["supports"]))
-    # small ceramic cube within the Piper's ~0.07 m gripper opening
-    g.add_node(_obj("red_mug_1", "mug", 0.36, 0.02, 0.024, 0.044, 0.044, 0.048,
-                    material="ceramic", affordances=["graspable_side", "containable"],
-                    attrs={"color": "red"}))
+    # small graspable cube within the Piper's ~0.07 m gripper opening
+    g.add_node(_obj(target_id, target_label, target_xy[0], target_xy[1], 0.024, 0.044, 0.044, 0.048,
+                    material=target_material, affordances=["graspable_side", "containable"],
+                    attrs={"color": target_color}))
     # open-top bin
-    g.add_node(_obj("bin_1", "bin", 0.30, -0.24, 0.06, 0.18, 0.18, 0.12,
+    g.add_node(_obj("bin_1", "bin", bin_xy[0], bin_xy[1], 0.06, 0.18, 0.18, 0.12,
                     kind=NodeKind.CONTAINER, material="plastic",
                     affordances=["container", "accepts_placement"]))
     # Piper arm base at origin; reach ~0.55 m, small parallel gripper

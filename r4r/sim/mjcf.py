@@ -46,7 +46,12 @@ def _box(name, size, pos, rgba, extra="") -> str:
             f'pos="{px:.4f} {py:.4f} {pz:.4f}" rgba="{rgba}" {extra}/>')
 
 
-def build_mjcf(graph: SceneGraph) -> Tuple[str, SimMeta]:
+def scene_elements(graph: SceneGraph) -> Tuple[List[str], List[str], SimMeta]:
+    """Build the static geoms (surfaces + container walls) and dynamic free
+    bodies (objects) for a graph. Shared by the plain scene and the Piper scene
+    so object naming/geometry is identical for both executors.
+
+    Returns (static_xml, body_xml, meta)."""
     meta = SimMeta()
     body_xml: List[str] = []
     static_xml: List[str] = []
@@ -94,6 +99,11 @@ def build_mjcf(graph: SceneGraph) -> Tuple[str, SimMeta]:
         )
         meta.free_objects.append(o.object_id)
 
+    return static_xml, body_xml, meta
+
+
+def build_mjcf(graph: SceneGraph) -> Tuple[str, SimMeta]:
+    static_xml, body_xml, meta = scene_elements(graph)
     xml = f"""<mujoco model="r4r_scene">
   <option gravity="0 0 -9.81" timestep="0.002" integrator="implicitfast"/>
   <visual>

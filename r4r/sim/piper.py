@@ -22,14 +22,48 @@ from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 
+from r4r.scene_graph.graph import SceneGraph
 from r4r.schemas.nodes import Pose
 from r4r.schemas.plan import ActionPlan
 from r4r.sim.executor import ExecutionResult
+from r4r.sim.mjcf import SimMeta, scene_elements
 
-PIPER_SCENE = os.path.join(
+PIPER_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-    "third_party", "mujoco_menagerie", "agilex_piper", "_r4r_arm_scene.xml",
+    "third_party", "mujoco_menagerie", "agilex_piper",
 )
+PIPER_SCENE = os.path.join(PIPER_DIR, "_r4r_arm_scene.xml")
+
+
+def build_piper_mjcf(graph: SceneGraph):
+    """Generate a combined MJCF (Piper arm + the graph's surfaces/objects/
+    containers) so ANY scene graph can be executed by the arm. The arm base is
+    at the world origin; place objects within its reach (~0.55 m) and the table
+    top near z = 0. Objects must be smaller than the ~0.07 m gripper opening.
+
+    Returns (xml_string, SimMeta)."""
+    static_xml, body_xml, meta = scene_elements(graph)
+    xml = f"""<mujoco model="r4r_piper_generated">
+  <include file="piper.xml"/>
+  <visual>
+    <headlight diffuse="0.6 0.6 0.6" ambient="0.35 0.35 0.35" specular="0.1 0.1 0.1"/>
+    <global azimuth="130" elevation="-25" offwidth="1280" offheight="720"/>
+  </visual>
+  <asset>
+    <texture type="skybox" builtin="gradient" rgb1="0.5 0.6 0.72" rgb2="0.1 0.12 0.16" width="512" height="512"/>
+    <texture type="2d" name="grid" builtin="checker" rgb1="0.3 0.32 0.35" rgb2="0.22 0.24 0.27"
+      markrgb="0.8 0.8 0.8" width="300" height="300"/>
+    <material name="grid" texture="grid" texuniform="true" texrepeat="6 6" reflectance="0.1"/>
+  </asset>
+  <worldbody>
+    <light pos="0.4 -0.4 1.5" dir="-0.2 0.2 -1" diffuse="0.8 0.8 0.8"/>
+    <camera name="fixed" pos="0.42 -0.85 0.62" xyaxes="0.9 0.44 0 -0.22 0.45 0.87"/>
+    <geom name="floor" type="plane" size="0 0 0.05" material="grid" pos="0 0 -0.001"/>
+    {''.join(static_xml)}
+    {''.join(body_xml)}
+  </worldbody>
+</mujoco>"""
+    return xml, meta
 
 
 @dataclass
@@ -48,14 +82,24 @@ class PiperConfig:
 
 
 class PiperArmExecutor:
-    def __init__(self, scene_xml: str = PIPER_SCENE, cfg: Optional[PiperConfig] = None) -> None:
+    def __init__(self, scene_xml: Optional[str] = None,
+                 graph: Optional[SceneGraph] = None,
+                 cfg: Optional[PiperConfig] = None) -> None:
         import mujoco  # lazy
 
+        self._mj = mujoco
+        self.cfg = cfg or PiperConfig()
+        if graph is not None:
+            # auto-generate the arm MJCF from the scene graph
+            xml, _ = build_piper_mjcf(graph)
+            scene_xml = os.path.join(PIPER_DIR, "_r4r_generated.xml")
+            with open(scene_xml, "w", encoding="utf-8") as f:
+                f.write(xml)
+        elif scene_xml is None:
+            scene_xml = PIPER_SCENE
         if not os.path.exists(scene_xml):
             raise FileNotFoundError(
                 f"Piper scene not found: {scene_xml}. Vendor mujoco_menagerie/agilex_piper.")
-        self._mj = mujoco
-        self.cfg = cfg or PiperConfig()
         self.model = mujoco.MjModel.from_xml_path(scene_xml)
         self.data = mujoco.MjData(self.model)
         self.on_step = None  # optional hook(self) for viewers/recorders

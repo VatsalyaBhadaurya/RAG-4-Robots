@@ -94,7 +94,8 @@ def run_episode(
         from r4r.sim.executor import update_graph_from_execution
         if execution_backend == "piper":
             from r4r.sim.piper import PiperArmExecutor
-            executor = PiperArmExecutor()
+            # generate the arm MJCF from this graph so any scene can be executed
+            executor = PiperArmExecutor(graph=graph)
         else:
             from r4r.sim.executor import MujocoExecutor
             executor = MujocoExecutor(graph)

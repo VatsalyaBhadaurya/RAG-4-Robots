@@ -61,3 +61,19 @@ def test_pipeline_drives_piper_arm_to_success():
     # world-state updated from the arm sim: cube now in the bin footprint
     mug = g2.get_node("red_mug_1").pose
     assert 0.216 <= mug.x <= 0.384 and -0.324 <= mug.y <= -0.156
+
+
+def test_arbitrary_layout_is_generated_and_executed():
+    # a DIFFERENT layout (target + bin moved) is auto-built into the arm MJCF
+    from r4r.scenes import build_piper_scene_graph
+    from r4r.sim.piper import PiperArmExecutor
+    from r4r.schemas.plan import ActionPlan, ActionStep
+
+    g = build_piper_scene_graph(target_xy=(0.40, -0.06), bin_xy=(0.30, 0.24))
+    plan = ActionPlan(task="put", selected_target="red_mug_1", destination="bin_1",
+                      steps=[ActionStep(action="grasp", target="red_mug_1"),
+                             ActionStep(action="place", target="bin_1")])
+    res = PiperArmExecutor(graph=g).execute(plan)
+    assert res.success is True, res.notes
+    fp = res.final_poses["red_mug_1"]
+    assert 0.21 <= fp.x <= 0.39 and 0.156 <= fp.y <= 0.324   # inside the +y bin

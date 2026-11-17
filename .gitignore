@@ -24,6 +24,9 @@ logs/
 chroma/
 *.sqlite3
 
+# generated arm scene (built from a SceneGraph at runtime)
+third_party/mujoco_menagerie/agilex_piper/_r4r_generated.xml
+
 # OS / editor
 .DS_Store
 .idea/
