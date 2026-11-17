@@ -97,6 +97,23 @@ def test_place_without_grasp_blocked():
     assert any(v.code in ("place_without_grasp", "missing_grasp") for v in res.errors())
 
 
+def test_grasp_place_release_sequence_is_valid():
+    # a redundant release after place is a harmless no-op, not an ERROR
+    plan = ActionPlan(
+        task="put_mug_in_bin", selected_target="mug_1", destination="bin_1",
+        steps=[
+            ActionStep(action="move_to", target="pregrasp_mug_1"),
+            ActionStep(action="grasp", target="mug_1", grasp_type="side", max_force="low"),
+            ActionStep(action="place", target="bin_1"),
+            ActionStep(action="release", target="mug_1"),
+        ],
+    )
+    res = _validate(_reachable_scene(), plan)
+    assert res.ok is True, str([v.code for v in res.errors()])
+    assert any(v.code == "redundant_release" and v.severity == Severity.WARNING
+               for v in res.violations)
+
+
 def test_empty_plan_is_not_executable():
     plan = ActionPlan(task="refusal", steps=[])
     res = _validate(_reachable_scene(), plan)

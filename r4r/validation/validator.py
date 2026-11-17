@@ -180,10 +180,18 @@ class PlanValidator:
         for i, a in enumerate(actions):
             if a == ActionType.GRASP:
                 holding = True
-            elif a in (ActionType.PLACE, ActionType.RELEASE):
+            elif a == ActionType.PLACE:
+                # placing/depositing an object that was never grasped is a logic error
                 if not holding:
                     res.add(Violation(code="place_without_grasp", severity=Severity.ERROR,
-                                      message=f"step {i} '{a.value}' with nothing grasped", step_index=i))
+                                      message=f"step {i} 'place' with nothing grasped", step_index=i))
+                holding = False
+            elif a == ActionType.RELEASE:
+                # releasing when empty (e.g. a redundant release after place) is a
+                # harmless no-op, not a safety violation
+                if not holding:
+                    res.add(Violation(code="redundant_release", severity=Severity.WARNING,
+                                      message=f"step {i} 'release' with nothing held (no-op)", step_index=i))
                 holding = False
         if plan.destination and ActionType.GRASP not in actions:
             res.add(Violation(code="missing_grasp", severity=Severity.ERROR,

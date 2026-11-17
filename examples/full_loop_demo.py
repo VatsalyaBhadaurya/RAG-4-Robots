@@ -14,6 +14,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from r4r.embeddings import HashEmbedder  # noqa: E402
+from r4r.knowledge import add_knowledge  # noqa: E402
 from r4r.logging_ import EpisodeLogger  # noqa: E402
 from r4r.pipeline import run_episode  # noqa: E402
 from r4r.planner import MockBackend  # noqa: E402
@@ -47,6 +48,7 @@ def main() -> None:
     g = build_pick_place_scene()
     for e in infer_spatial_edges(g.nodes()):
         g.add_edge(e)
+    add_knowledge(g)  # safety rules + grasp procedures so the planner has guidance
 
     before = [round(v, 3) for v in g.get_node("red_mug_1").pose.position()]
     log, g = run_episode(g, instruction, HashEmbedder(512), _backend(),
