@@ -1,9 +1,12 @@
-# Phase 3/4 ML deps — install into a Python >= 3.10 venv (see risk R-01).
-# Versions intentionally unpinned here; pin after resolving the interpreter.
+# Phase 3/4 ML deps — install into the Python 3.12 .venv (see risk R-01, D-06).
 
-# Phase 3 — GraphRAG vector index + text embeddings
+# Phase 3 — GraphRAG vector index (chosen persistent backend)
 chromadb
-sentence-transformers
+
+# Embeddings are served locally via Ollama (nomic-embed-text), NOT
+# sentence-transformers — see D-07. Only the `ollama` client is needed:
+ollama
 
 # Phase 4 — GNN layer (chosen: PyTorch Geometric; keep a to_graphnet() adapter)
+# Install matching your torch/CUDA build; pin after Phase 4 starts.
 torch-geometric

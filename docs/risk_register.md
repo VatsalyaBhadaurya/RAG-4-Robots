@@ -4,7 +4,8 @@ Severity: H(igh) / M(edium) / L(ow). Status: Open / Mitigated / Accepted.
 
 | ID | Risk | Sev | Status | Mitigation |
 |----|------|-----|--------|------------|
-| R-01 | **Python 3.8.10 is EOL.** Recent `chromadb` / `torch-geometric` releases often require Python ≥3.9, blocking Phase 3/4 installs. | H | Open | Isolate ML deps in `requirements-ml.txt`; create a Python ≥3.10 venv before Phase 3. Core Phase 2 verified on 3.8. |
+| R-01 | **Python 3.8.10 is EOL.** Recent `chromadb` / `torch-geometric` releases often require Python ≥3.9, blocking Phase 3/4 installs. | H | **Mitigated** | `.venv` on Python 3.12.10 created; chromadb 1.5.9 installed; 40 tests pass. Phase 3+ uses `.venv`. (D-06) |
+| R-09 | **Retrieval precision is modest (~0.46)** — over-retrieval at fixed k. Could enlarge the planner's candidate set. | M | Open | Recall-first is intentional (R high ~0.94); validator prunes. Add adaptive-k / score threshold / PCST selection; measure on larger scenes. (D-08) |
 | R-02 | **Ollama not running / no model pulled.** Phase 5 planner has no backend yet. | M | Open | User action: `ollama serve` + pull an instruct model. Planner interface will be built model-agnostic with a mock backend for tests. |
 | R-03 | **Local LLM weak JSON-schema adherence.** Plans may be malformed/hallucinate ids. | H | Open (design) | Strict pydantic `ActionPlan` validation + deterministic validator that rejects fabricated ids; retry/repair loop; `fallback: ask_human`. LLM is never the sole safety authority. |
 | R-04 | **AABB spatial heuristics are approximate** (orientation ignored). Wrong on/inside relations possible for tilted/odd shapes. | M | Accepted (MVP) | Confidence-weighted DERIVED edges; replace with MuJoCo geometry queries in Phase 4/6; measure relation accuracy vs sim GT. |

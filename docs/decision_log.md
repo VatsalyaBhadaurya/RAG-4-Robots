@@ -51,3 +51,22 @@ Labels: **Verified** (from a cited source) · **Inferred** (reasoned from eviden
 - **Evidence:** Implemented in `r4r/scene_graph/spatial.py`; unit-tested.
 - **Rationale (Assumption):** Adequate for a tabletop MVP without a geometry engine; every edge is `DERIVED` with a confidence margin so downstream can discount it.
 - **Next validation:** Phase 4/6 — replace with MuJoCo geometry/collision queries where grasp/collision fidelity matters; measure relation accuracy vs sim ground truth.
+
+## D-06 — Dev interpreter → **Python 3.12 venv** (mitigates R-01)
+- **Decision:** Create `.venv` on Python 3.12.10 for Phase 3+ (ML deps); Phase 2 core still runs on 3.8.
+- **Evidence (Verified):** `py -0p` shows 3.10/3.12/3.13/3.14 available. `.venv` built on 3.12; installed networkx 3.7, pydantic 2.14.3, chromadb 1.5.9; 40 tests pass.
+- **Rationale:** `chromadb`/`torch-geometric` commonly need Python ≥3.9; 3.12 has broad wheel support.
+- **Next validation:** Phase 4 — install `torch-geometric` into the same venv.
+
+## D-07 — Embeddings → **Ollama `nomic-embed-text`** (768-d), with offline HashEmbedder for tests
+- **Options:** sentence-transformers (local torch); Ollama embedding model; OpenAI-style API.
+- **Evidence (Verified):** `nomic-embed-text` already pulled in local Ollama; returns 768-d vectors (measured). Avoids a second heavy torch/download path.
+- **Chosen:** `OllamaEmbedder` at runtime; `HashEmbedder` (deterministic, dependency-free) for tests so CI never needs a server.
+- **Rationale:** Local, consistent with the Ollama planner decision (D-04); keeps tests hermetic.
+- **Assumptions:** Ollama served. **Next validation:** Phase 5 — reuse the same server for the planner model.
+
+## D-08 — Retrieval design → **two-stage, recall-first**
+- **Decision:** Stage 1 semantic entity retrieval (vector top-k over abstraction phrases) → Stage 2 induced-subgraph expansion (depth/relation filters). Knowledge retrieved as separate chunks. Compact serialization with provenance/confidence/timestamps.
+- **Evidence (Verified):** Mirrors EmbodiedRAG (abstraction → entities → induced subgraph) and G-Retriever (semantic match → subgraph). Measured on the benchmark: mean recall 0.94, precision 0.46, token savings ×1.4 (10-node scene) with `nomic-embed-text`.
+- **Rationale:** Recall-first is the safe default — missing a task-relevant entity is worse than retrieving extra context the validator can prune. "Gold" is the minimal entity set, so precision <1 partly reflects useful context (support surface, robot), not pure error.
+- **Assumptions / next validation:** Precision improves with adaptive-k / score thresholding and PCST-style selection (G-Retriever); token savings grow with scene size (EmbodiedRAG's scalability motivation). Validate on larger scenes in a later phase.

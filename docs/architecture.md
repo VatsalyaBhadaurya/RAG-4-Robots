@@ -42,8 +42,11 @@ knowledge) so retrieval can traverse them together.
 | `r4r/scene_graph/graph.py` | **Implemented** | Dynamic graph: CRUD, query, persistence, induced subgraph |
 | `r4r/scene_graph/spatial.py` | **Implemented** | AABB spatial-relation heuristics |
 | `r4r/scenes/tabletop.py` | **Implemented (mocked perception)** | Deterministic demo/benchmark scene |
-| `r4r/index` | Planned (P3) | Vector embeddings + retrieval |
-| `r4r/retrieval` | Planned (P3) | Entity match -> subgraph expansion + serialization |
+| `r4r/embeddings` | **Implemented** | Hash (offline) + Ollama (`nomic-embed-text`) embedders |
+| `r4r/index` | **Implemented** | `NumpyVectorIndex` + optional `ChromaVectorIndex` (parity tested) |
+| `r4r/retrieval` | **Implemented** | Task abstraction, two-stage retriever, compact serialization w/ provenance |
+| `r4r/knowledge` | **Implemented** | Seed safety rules / templates / procedures as knowledge nodes |
+| `r4r/eval` | **Implemented (P3 metrics)** | Retrieval precision/recall + token-savings benchmark |
 | `r4r/scoring` | Planned (P4) | Heuristic + GNN scores; PyG tensor conversion; `to_graphnet()` |
 | `r4r/planner` | Planned (P5) | Ollama client -> strict `ActionPlan` |
 | `r4r/validation` | Planned (P6) | Deterministic plan validator + safety guard |

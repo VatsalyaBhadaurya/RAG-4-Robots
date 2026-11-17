@@ -45,6 +45,17 @@ PHYSICAL_KINDS = {
     NodeKind.END_EFFECTOR,
 }
 
+# Kinds that represent static knowledge (retrieved as RAG chunks, no pose).
+KNOWLEDGE_KINDS = {
+    NodeKind.PROCEDURE,
+    NodeKind.CONSTRAINT,
+    NodeKind.TOOL,
+    NodeKind.API,
+    NodeKind.SAFETY_RULE,
+    NodeKind.DEMONSTRATION,
+    NodeKind.TASK_TEMPLATE,
+}
+
 
 class Pose(BaseModel):
     """6-DoF pose in a named reference frame. Quaternion is (w, x, y, z)."""
