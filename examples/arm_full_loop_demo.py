@@ -26,7 +26,7 @@ from r4r.scene_graph import infer_spatial_edges  # noqa: E402
 from r4r.scenes import build_piper_scene_graph  # noqa: E402
 
 _CANNED = json.dumps({
-    "task": "put_red_mug_in_bin", "selected_target": "red_mug_1", "destination": "bin_1",
+    "task": "put_cereal_in_box", "selected_target": "cereal_box_1", "destination": "bin_1",
     "steps": [{"action": "move_to", "target": "pregrasp_red_mug_1"},
               {"action": "grasp", "target": "red_mug_1", "grasp_type": "side", "max_force": "low"},
               {"action": "place", "target": "bin_1"},

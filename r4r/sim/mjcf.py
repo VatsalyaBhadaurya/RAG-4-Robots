@@ -14,15 +14,10 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, List, Tuple
 
+from r4r.materials import DEFAULT_DENSITY, DENSITY
 from r4r.scene_graph.graph import SceneGraph
 from r4r.schemas.nodes import NodeKind, SceneNode
 
-# solid densities (kg/m^3); default for unknown material
-_DENSITY = {
-    "ceramic": 2300.0, "glass": 2500.0, "aluminium": 2700.0, "metal": 7800.0,
-    "metal_plastic": 3000.0, "wood": 650.0, "cardboard": 300.0, "plastic": 500.0,
-}
-_DEFAULT_DENSITY = 500.0
 _WALL_T = 0.012  # bin wall thickness (m)
 
 
@@ -36,7 +31,7 @@ class SimMeta:
 
 
 def _density(n: SceneNode) -> float:
-    return _DENSITY.get((n.material or "").lower(), _DEFAULT_DENSITY)
+    return DENSITY.get((n.material or "").lower(), DEFAULT_DENSITY)
 
 
 def _box(name, size, pos, rgba, extra="") -> str:

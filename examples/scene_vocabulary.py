@@ -14,13 +14,11 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from r4r.knowledge import build_default_knowledge
+from r4r.materials import DENSITY, FRAGILE_MATERIALS
 from r4r.scenes import build_pick_place_scene, build_piper_scene_graph, build_tabletop_scene
 from r4r.schemas.edges import RelationType
 from r4r.schemas.nodes import KNOWLEDGE_KINDS, PHYSICAL_KINDS, NodeKind
 from r4r.schemas.plan import ActionType, PlanFallback
-from r4r.sim.mjcf import _DENSITY as SIM_DENSITY
-from r4r.validation.validator import _DENSITY as VAL_DENSITY
-from r4r.validation.validator import _FRAGILE
 
 
 def line(t): print("\n" + t + "\n" + "-" * len(t))
@@ -40,9 +38,8 @@ def main() -> None:
     print("fallbacks:", [f.value for f in PlanFallback])
 
     line("MATERIALS with known density (payload + sim mass); others -> 'unknown_mass' warning")
-    print("validator:", sorted(VAL_DENSITY))
-    print("simulator:", sorted(SIM_DENSITY))
-    print("fragile (need low grasp force):", sorted(_FRAGILE))
+    print("known:", sorted(DENSITY))
+    print("fragile (need low grasp force):", sorted(FRAGILE_MATERIALS))
 
     line("AFFORDANCES the scorer/validator react to (free-form strings; these matter)")
     print("graspable*    -> graspability (e.g. graspable_side, graspable_top)")

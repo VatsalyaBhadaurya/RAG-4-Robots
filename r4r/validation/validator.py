@@ -10,10 +10,11 @@ from __future__ import annotations
 
 import math
 import re
-from typing import Dict, Optional
+from typing import Optional
 
 from pydantic import BaseModel, Field
 
+from r4r.materials import density_of, is_fragile
 from r4r.planner.context import RobotConstraints
 from r4r.scene_graph.graph import SceneGraph
 from r4r.schemas.nodes import NodeKind
@@ -21,14 +22,6 @@ from r4r.schemas.plan import ActionPlan, ActionType
 from r4r.scoring.report import ScoreReport
 from r4r.validation.result import Severity, ValidationResult, Violation
 
-# Rough solid densities (kg/m^3). Used for a CONSERVATIVE (over-)estimate of
-# mass for payload checks — real objects are often hollow, so over-estimating is
-# the safe direction. Unknown material -> uncertain (warning, not error).
-_DENSITY: Dict[str, float] = {
-    "ceramic": 2300.0, "glass": 2500.0, "aluminium": 2700.0, "metal": 7800.0,
-    "metal_plastic": 3000.0, "wood": 650.0, "cardboard": 700.0, "plastic": 950.0,
-}
-_FRAGILE = {"ceramic", "glass"}
 _SYNTHETIC = ("pregrasp", "approach", "_slot", "_rack", "pose_", "home")
 
 
@@ -138,7 +131,7 @@ class PlanValidator:
                     res.add(Violation(code="uncertain_scores", severity=Severity.WARNING,
                                       message=f"'{tgt}' scored with missing features (uncertain)", subject=tgt))
             # fragile handling: grasp step should use low force
-            if (n.material or "").lower() in _FRAGILE:
+            if is_fragile(n.material):
                 grasp_steps = [st for st in plan.steps if st.action == ActionType.GRASP and tgt in st.target]
                 if grasp_steps and not any((st.max_force or "").lower() == "low" for st in grasp_steps):
                     res.add(Violation(code="fragile_force", severity=Severity.WARNING,
@@ -150,7 +143,7 @@ class PlanValidator:
         if tgt and graph.has_node(tgt) and constraints.payload_kg is not None:
             n = graph.get_node(tgt)
             if n.dims is not None:
-                dens = _DENSITY.get((n.material or "").lower())
+                dens = density_of(n.material)
                 if dens is None:
                     res.add(Violation(code="unknown_mass", severity=Severity.WARNING,
                                       message=f"'{tgt}' material unknown; cannot verify payload", subject=tgt))

@@ -53,9 +53,9 @@ def build_my_scene() -> SceneGraph:
                          material="wood", affordances=["supports"]))
 
     # 2) your objects (OBJECT kind). Keep them < ~0.07 m and within reach.
-    g.add_node(perceived("red_mug_1", NodeKind.OBJECT, "mug",
+    g.add_node(perceived("cereal_box_1", NodeKind.OBJECT, "box",
                          pos=(0.38, 0.05, 0.024), dims=(0.044, 0.044, 0.048),
-                         material="ceramic", affordances=["graspable_side", "containable"],
+                         material="cardboard", affordances=["graspable_side", "containable"],
                          attrs={"color": "red"}))
     # a distractor object the planner/validator must NOT pick for this task
     g.add_node(perceived("green_block_1", NodeKind.OBJECT, "block",

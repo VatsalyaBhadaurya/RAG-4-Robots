@@ -99,8 +99,9 @@ r4r/knowledge/    seed safety rules / templates / procedures
 r4r/scoring/      heuristic scorers + subgraph→tensor schema (PyG/GraphNeT)
 r4r/planner/      ollama planner -> strict ActionPlan (validate/repair/ground)
 r4r/validation/   deterministic plan validator + safety guard
-r4r/sim/          MJCF builder + MuJoCo executor (attach-and-carry physics)
+r4r/sim/          MJCF builder + MuJoCo executors (kinematic + real Piper arm)
 r4r/logging_/     JSONL episode logs
+r4r/materials.py  shared material density / fragility constants
 r4r/pipeline.py   run_episode() end-to-end orchestration
 r4r/eval/         retrieval benchmark + metrics
 tests/            unit tests (offline; ollama/chroma tests auto-skip)

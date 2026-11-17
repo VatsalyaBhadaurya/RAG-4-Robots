@@ -26,7 +26,7 @@ from r4r.scene_graph.graph import SceneGraph
 from r4r.schemas.nodes import Pose
 from r4r.schemas.plan import ActionPlan
 from r4r.sim.executor import ExecutionResult
-from r4r.sim.mjcf import SimMeta, scene_elements
+from r4r.sim.mjcf import scene_elements
 
 PIPER_DIR = os.path.join(
     os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
